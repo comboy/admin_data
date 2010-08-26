@@ -1,0 +1,14 @@
+<%= form_tag('#', :method => 'get', :class => 'form search_form', :id => 'update_all_form') %>   
+
+  <div class='search_box'>
+    <div id='quick_search'>
+      <%= label_tag 'tbd', 'search keyword', :class => 'label keyword_label' %> 
+      <%= text_area_tag 'query', '', :id => 'update_all_input' %>
+
+      <div class='clear'></div>
+
+      <%= submit_tag 'Update All', :name => nil, :disable_with => 'updating ...', :class => 'submit_search' %>
+    </div>
+  </div>
+
+</form>

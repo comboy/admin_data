@@ -6,28 +6,32 @@ class AdminData::SearchController  < AdminData::BaseController
 
   unloadable
 
-  before_filter :get_class_from_params
+  before_filter :get_class_from_params, :except => [:update_all]
   before_filter :ensure_is_allowed_to_view
   before_filter :ensure_is_allowed_to_view_klass
   before_filter :ensure_valid_children_klass, :only => [:quick_search]
   before_filter :ensure_is_authorized_for_update_opration, :only => [:advance_search]
   before_filter :set_collection_of_columns, :only => [:advance_search]
 
+  def update_all
+    #
+  end
+
   def quick_search
     @page_title = "Search #{@klass.name.underscore}"
-    @order = default_order
+    order = default_order
 
     if params[:base]
       klass = AdminData::Util.camelize_constantize(params[:base])
       model = klass.find(params[:model_id])
       has_many_proxy = model.send(params[:children].intern)
       @total_num_of_children = has_many_proxy.send(:count)
-      h = { :page => params[:page], :per_page => per_page, :order => @order }
+      h = { :page => params[:page], :per_page => per_page, :order => order }
       @records = has_many_proxy.send(:paginate, h)
     else
       params[:query] = params[:query].strip unless params[:query].blank?
       cond = build_quick_search_conditions(@klass, params[:query])
-      h = { :page => params[:page], :per_page => per_page, :order => @order, :conditions => cond }
+      h = { :page => params[:page], :per_page => per_page, :order => order, :conditions => cond }
       @records = @klass.paginate(h)
     end
     respond_to {|format| format.html}
@@ -38,31 +42,23 @@ class AdminData::SearchController  < AdminData::BaseController
     @page_title = "Advance search #{@klass.name.underscore}"
     plugin_dir = AdminData::Config.setting[:plugin_dir]
     hash = build_advance_search_conditions(@klass, params[:adv_search])
-    @relation = hash[:cond]
-    errors = hash[:errors]
-    @order = default_order
+    relation = hash[:cond]
 
     respond_to do |format|
       format.html { render }
       format.js {
 
         if !hash[:errors].blank?
-          render :file =>  "#{plugin_dir}/app/views/admin_data/search/search/_errors.html.erb", :locals => {:errors => errors}
-          return
-        end
-        if params[:admin_data_advance_search_action_type] == 'destroy'
-          handle_advance_search_action_type_destroy
-        elsif params[:admin_data_advance_search_action_type] == 'delete'
-          handle_advance_search_action_type_delete
-        else
-          @records = @relation.order(@order).paginate(:page => params[:page], :per_page => per_page)
-        end
+          render  :file =>  "#{plugin_dir}/app/views/admin_data/search/search/_errors.html.erb", 
+                  :locals => {:errors => hash[:errors] }
 
-        if @success_message
-          render :json => {:success => @success_message }
+        elsif action_type = params[:admin_data_advance_search_action_type]
+          render :json => {:success => handle_advance_search_action(relation, action_type) }
+        
         else
-          render   :file =>  "#{plugin_dir}/app/views/admin_data/search/search/_listing.html.erb", 
-                    :locals => {:klass => @klass, :records => @records}
+          records = relation.order(default_order).paginate(:page => params[:page], :per_page => per_page)
+          render  :file =>  "#{plugin_dir}/app/views/admin_data/search/search/_listing.html.erb", 
+                  :locals => {:klass => @klass, :records => records}
         end
       }
     end
@@ -92,18 +88,19 @@ class AdminData::SearchController  < AdminData::BaseController
     end
   end
 
-  def handle_advance_search_action_type_delete
-    count = @relation.count
-    @relation.delete_all
-    @success_message = "#{count} #{AdminData::Util.pluralize(count, 'record')} deleted"
-  end
+  def handle_advance_search_action(relation, action_type)
+    count = relation.count
+    msg = "#{count} #{AdminData::Util.pluralize(count, 'record')} "
 
-  def handle_advance_search_action_type_destroy
-    count = @relation.count
-    @relation.find_in_batches do |group|
-      group.each {|record| record.destroy }
+    if action_type == 'delete'
+      relation.delete_all
+      msg << 'deleted'
+    else
+      relation.find_in_batches do |group|
+        group.each {|record| record.destroy }
+      end
+      msg << 'destroyed'
     end
-    @success_message = "#{count} #{AdminData::Util.pluralize(count, 'record')} destroyed"
   end
 
   def default_order

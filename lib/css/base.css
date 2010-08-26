@@ -1069,3 +1069,29 @@ ul#subnav li a:hover {
 .col_box {
   border-top: 1px dotted #efefef;
 }
+
+
+#search_result_title {
+  float: left;
+  margin-top: 5px; 
+  padding-top: 5px; 
+}
+
+.delete_destroy_box { 
+  float: left;
+  margin-top: 6px;
+  padding-top: 6px;
+  margin-left: 20px;
+}
+
+.keyword_label { 
+  float: left;
+  padding-right: 10px;
+  margin-right: 10px;
+}
+
+#quick_search_input { 
+  float: left;
+  margin-left: 10px;
+  margin-right: 20px;
+}

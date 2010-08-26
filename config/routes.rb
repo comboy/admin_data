@@ -19,6 +19,7 @@ Rails.application.routes.draw do |map|
     admin_data.with_options :controller => 'search' do |m|
       m.search                      '/quick_search/:klass',             :action => 'quick_search'
       m.advance_search              '/advance_search/:klass',           :action => 'advance_search'
+      m.update_all                  '/search/update_all',               :action => 'update_all'
     end
 
 

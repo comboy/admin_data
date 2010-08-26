@@ -1,14 +1,17 @@
-<%= form_tag('#', :method => 'get', :class => 'form search_form', :id => 'update_all_form') %>   
+<div id='update_all_umbrella'>
+  <%= form_tag('#', :method => 'get', :class => 'form search_form', :id => 'update_all_form') %>   
+    <p>
+      Each record would be made available as varialbe <tt>model</tt>. You can do something like this
+      in the area below. Note that it is your responsibility to actually update the record by using update_attributes, update_attribute or just using save. If you have more than one statement then use semicolon to separate them. Note <tt>eval</tt> is done on the whole data you enter.
+    </p>
+    <p>
+    <tt>model.update_attributes(:name => 'John', :status => 'active')</tt> <br />
+    <tt>model.status ='active'; model.save</tt> <br />
+    </p>
+    <%= text_area_tag 'query', '', :id => 'update_all_input', :cols => 130, :rows => 4 %>
+    <br />
+    <%= submit_tag 'Update All', :name => nil, :disable_with => 'updating ...', :id => 'update_all_submit' %>
+    <%= link_to 'Cancel', '#', :class => 'cancel' %>
+  </form>
+</div>
 
-  <div class='search_box'>
-    <div id='quick_search'>
-      <%= label_tag 'tbd', 'search keyword', :class => 'label keyword_label' %> 
-      <%= text_area_tag 'query', '', :id => 'update_all_input' %>
-
-      <div class='clear'></div>
-
-      <%= submit_tag 'Update All', :name => nil, :disable_with => 'updating ...', :class => 'submit_search' %>
-    </div>
-  </div>
-
-</form>

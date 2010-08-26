@@ -1095,3 +1095,22 @@ ul#subnav li a:hover {
   margin-left: 10px;
   margin-right: 20px;
 }
+
+#update_all_umbrella {
+ border: 2px solid #17B0F8;
+ background: #C1EAFE;
+  width: 100%;
+  padding: 5px;
+  margin: 10px 5px 20px 5px;
+}
+#main .block .content #update_all_umbrella p {
+  font-size: 120%;
+}
+
+#update_all_submit {
+  margin-right: 5px;
+}
+#update_all_input {
+  display: block;
+  float: none;
+}

@@ -27,6 +27,7 @@
     <% if params[:action] == 'advance_search' && !Rails.env.test? %>
       <%= AdminData::Util.javascript_include_tag(
                                                  'advance_search/advance_search', 
+                                                 'advance_search/update_all', 
                                                  'advance_search/advance_search_structure', 
                                                  'advance_search/ajaxify_advance_search',
                                                  'advance_search/act_on_result',

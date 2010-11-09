@@ -221,9 +221,16 @@ class AdminData::Util
   end
 
   def self.associations_for(klass, association_type)
-    klass.name.camelize.constantize.reflections.values.select do |value|
-      value.macro == association_type
-    end
+    klass.name.camelize.constantize.reflections.values.select { |value| value.macro == association_type }
+  end
+
+  def self.association_info_hash(k)
+    h = {}
+    h.merge!(:belongs_to => r ) if (r = belongs_to_what(k)) && r.any?
+    h.merge!(:has_many => r ) if (r = has_many_what(k)) && r.any?
+    h.merge!(:has_one => r ) if (r = has_one_what(k)) && r.any?
+    h.merge!(:habtm => r ) if (r = habtm_what(k)) && r.any?
+    h
   end
 
   def self.exception_info(e)

@@ -25,9 +25,12 @@
 <div style='display:none;' id='primary_column_type_info'>
   <%=@column_type_info%>
 </div>
-<div style='display:none;' id='association_info'>
-  <%=@association_info%>
-</div>
+
+<% unless @association_info.blank? %>
+  <div style='display:none;' id='association_info'>
+    <%=@association_info%>
+  </div>
+<% end %>
 
 <style>
    .sortby_umbrella { 

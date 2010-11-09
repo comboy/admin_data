@@ -857,16 +857,6 @@ table {
 	font-size: 15px;
 }
 
-#advance_search_table select {
-	font-size: 15px;
-	width: 280px;
-	padding: 2px;
-	margin: 2px;
-}
-
-#advance_search_table select option {
-   padding: 2px 5px;
-}
 
 .advtable td {
 	border-bottom: 1px solid #F0F0EE;
@@ -1046,9 +1036,6 @@ table#missing_index tr td {
   margin: 0;
 }
 
-#advance_search_table a {
-  color: #fff;
-}
 
 ul#subnav {
    background: #fff9d8;
@@ -1105,4 +1092,21 @@ ul#subnav li a:hover {
   float:left;
   margin:22px 0 0 10px;
   color:gray;
+}
+
+#advance_search_table select {
+	font-size: 15px;
+	width: 280px;
+	padding: 2px;
+	margin: 2px;
+}
+#advance_search_table select option {
+   padding: 2px 5px;
+}
+#advance_search_table a {
+  color: #fff;
+}
+#advance_search_table td.col4 a {
+  color: #000;
+  margin-right: 10px;
 }

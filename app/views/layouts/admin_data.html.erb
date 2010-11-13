@@ -24,6 +24,7 @@
     <% if params[:action] == 'advance_search' %>
       <%= AdminData::Util.javascript_include_tag(
                                                  'advance_search/primary_row_builder', 
+                                                 'advance_search/associations_row_builder', 
                                                  'advance_search/mappings', 
                                                  'advance_search/ajaxify_search',
                                                  'advance_search/act_on_result',

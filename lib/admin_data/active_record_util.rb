@@ -9,6 +9,14 @@ module AdminData
       delcared_association_names_for(klass, :belongs_to).map(&:name).map(&:to_s)
     end
 
+    def self.declared_has_one_association_names(klass)
+      delcared_association_names_for(klass, :has_one).map(&:name).map(&:to_s)
+    end
+
+    def self.declared_has_many_association_names(klass)
+      delcared_association_names_for(klass, :has_many).map(&:name).map(&:to_s)
+    end
+
     # returns declared association names like
     # #=> comments
     # #=> positive_comments

@@ -187,20 +187,15 @@ class AdminData::Util
     model.send(hm.intern).count
   end
 
-  def self.has_many_what(klass)
-    associations_for(klass, :has_many).map(&:name).map(&:to_s)
-  end
-
-  def self.has_one_what(klass)
-    associations_for(klass, :has_one).map(&:name).map(&:to_s)
-  end
-
   def self.habtm_count(model, m)
     model.send(m.intern).count
   end
 
   def self.association_info_size(k)
-    AdminData::ActiveRecordUtil.declared_belongs_to_association_names(k).any? || has_many_what(k).any? || has_one_what(k).any? || AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
+    AdminData::ActiveRecordUtil.declared_belongs_to_association_names(k).any? || 
+    AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? || 
+    AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? || 
+    AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
   end
 
   def self.string_representation_of_data(value)

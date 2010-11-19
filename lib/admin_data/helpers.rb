@@ -40,7 +40,7 @@ module AdminData::Helpers
   end
 
   def admin_data_has_one(model, klass)
-    tmp = AdminData::Util.has_one_what(klass)
+    tmp = AdminData::ActiveRecordUtil.declared_has_one_association_names(klass)
     tmp.inject('') do |output, ho|
       begin
         label = ho
@@ -58,7 +58,7 @@ module AdminData::Helpers
   end
 
   def admin_data_has_many_data(model, klass)
-    array = AdminData::Util.has_many_what(klass).inject([]) do |output, hm|
+    array = AdminData::ActiveRecordUtil.declared_has_many_association_names(klass).inject([]) do |output, hm|
       begin
         label = hm + '(' + AdminData::Util.has_many_count(model,hm).to_s + ')'
         if AdminData::Util.has_many_count(model,hm) > 0

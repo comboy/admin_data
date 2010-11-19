@@ -57,18 +57,17 @@ module AdminData::Helpers
   end
 
   def admin_data_has_many_data(model, klass)
-    array = AdminData::ActiveRecordUtil.declared_has_many_association_names(klass).inject([]) do |output, hm|
+    array = AdminData::ActiveRecordUtil.declared_has_many_association_names(klass).map do |m|
       begin
         count = model.send(m.intern).count
-        label = hm + '(' + count + ')'
+        label = m.to_s + '(' + count.to_s + ')'
+        output = label
         if count > 0
-          has_many_klass_name = AdminData::Util.get_class_name_for_has_many_association(model,hm).name.underscore
-          output << link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
-          :children => hm,
+          has_many_klass_name = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model.class, :has_many, m).name.underscore
+          output = link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
+          :children => m,
           :base => klass.name.underscore,
           :model_id => model.id))
-        else
-          output << label
         end
       rescue => e
         Rails.logger.debug AdminData::Util.exception_info(e)
@@ -79,56 +78,44 @@ module AdminData::Helpers
   end
 
   def admin_data_belongs_to_data(model, klass)
-    array = AdminData::ActiveRecordUtil.declared_belongs_to_association_names(klass).inject([]) do |output, bt|
+    AdminData::ActiveRecordUtil.declared_belongs_to_association_names(klass).map do |assoc_name|
       begin
-        t = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model, :belongs_to, bt)
-        #TODO test for polymorphic
-        klass_name = t[:polymorphic] ? 'Polymorphic' : t[:klass_name]
-        belongs_to_record = model.send(bt)
+        output = assoc_name
+        if belongs_to_record = model.send(assoc_name)
+          output = link_to(assoc_name, admin_data_on_k_path(:klass => belongs_to_record.class.name.underscore, :id => belongs_to_record.id))
+        end
+      rescue => e
+        Rails.logger.info AdminData::Util.exception_info(e)
+      end
+      output
+    end.join(', ')
+  end
 
-        if belongs_to_record && t[:polymorphic]
-          output << link_to(belongs_to_record.class.name,
-          admin_data_on_k_path(:klass => belongs_to_record.class.name.underscore, :id => belongs_to_record))
-        elsif belongs_to_record
-          output << link_to(bt, admin_data_on_k_path(:klass => klass_name.underscore, :id => model.send(bt)))
-        else
-          output << bt
-        end
-      rescue => e
-        Rails.logger.info AdminData::Util.exception_info(e)
-      end
-      output
-    end
-    array.join(', ')
-  end
-  
   def admin_data_habtm_data(model, klass)
-    array = AdminData::ActiveRecordUtil.declared_habtm_association_names(klass).inject([]) do |output, m|
-      # same as admin_data_has_many_data()
+    AdminData::ActiveRecordUtil.declared_habtm_association_names(klass).map do |assoc_name|
       begin
-        count = model.send(m.intern).count
-        label = m + '(' + count.to_s + ')'
+        count = model.send(assoc_name.intern).count
+        label = assoc_name + '(' + count.to_s + ')'
+        output = label
+
         if count > 0 then
-          has_many_klass_name = AdminData::Util.get_class_name_for_habtm_association(model,m).name.underscore
-          output << link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
-                      :children => m,
-                      :base => klass.name.underscore,
-                      :model_id => model.id))
-        else
-          output << label
+          has_many_klass_name = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model.class, :has_and_belongs_to_many, assoc_name).name.underscore
+          output = link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
+          :children => assoc_name,
+          :base => klass.name.underscore,
+          :model_id => model.id))
         end
       rescue => e
         Rails.logger.info AdminData::Util.exception_info(e)
       end
       output
-    end
-    array.join(', ')
+    end.join(', ')
   end
-  
+
   def admin_data_habtm_values_for(model, klass)
-    assoc_klass = AdminData::Util.get_class_name_for_habtm_association(model, klass)
+    assoc_klass = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model, klass)
     name = assoc_klass.columns.map(&:name).include?('name') ? :name : assoc_klass.primary_key
-    model.send(assoc_klass.table_name).map{ |e| 
+    model.send(assoc_klass.table_name).map{ |e|
       link_to(e.send(name), admin_data_on_k_path(:klass => assoc_klass, :id => e.id))
     }.join(", ").html_safe
   end
@@ -176,24 +163,24 @@ module AdminData::Helpers
       'could not retrieve' # returning nil
     end
   end
-  
+
   def admin_data_form_field_for_habtm_records(klass, model, f, html)
     begin
       html = []
       AdminData::ActiveRecordUtil.delcared_habtm_association_names(klass).each do |k|
         assoc_klass = AdminData::Util.get_class_name_for_habtm_association(model, k)
-        
+
         html << "<div class='col_box'>"
         html << "  <span class='col_name'>#{assoc_klass.table_name}</span>"
         html << "  <span class='col_type'>[integer]</span>"
         html << "</div>"
-        
+
         order_by = assoc_klass.columns.map(&:name).include?('name') ? :name : assoc_klass.primary_key
         all = assoc_klass.all(:order => order_by)
         selected = model.send(assoc_klass.table_name).map{|e| e.id}
-        html << f.collection_select(assoc_klass.table_name, all, :id, order_by, 
-              {:include_blank => false, :selected => selected}, 
-              {:multiple => true, :size => (all.count > 10 ? 8 : 4)})
+        html << f.collection_select(assoc_klass.table_name, all, :id, order_by,
+        {:include_blank => false, :selected => selected},
+        {:multiple => true, :size => (all.count > 10 ? 8 : 4)})
       end
       html.join
     rescue Exception => e
@@ -279,14 +266,14 @@ module AdminData::Helpers
         name = ar.klass.columns.map(&:name).include?('name') ? :name : ar.klass.primary_key
         assoc = model.send(ar.name)
         if not name.nil? then
-          value = ("#{value} (" + 
-                  link_to(
-                    assoc.send(name), 
-                    admin_data_on_k_path(:klass => ar.klass, 
-                                              :id => assoc.send(ar.klass.primary_key))) + ")").html_safe
+          value = ("#{value} (" +
+          link_to(
+          assoc.send(name),
+          admin_data_on_k_path(:klass => ar.klass,
+          :id => assoc.send(ar.klass.primary_key))) + ")").html_safe
         end
       end
-      
+
       value
     end
   end

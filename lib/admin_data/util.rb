@@ -154,29 +154,6 @@ class AdminData::Util
     data.join("\n")
   end
   
-  def self.get_class_name_for_habtm_association(model, has_many_string)
-    klass = model.kind_of?(Class) ? model : model.class
-    data = klass.name.camelize.constantize.reflections.values.detect do |value|
-      value.macro == :has_and_belongs_to_many && value.name.to_s == has_many_string
-    end
-    data.klass if data # output of detect from hash is an array with key and value
-  end
-
-  def self.get_class_name_for_has_many_association(model, has_many_string)
-    data = model.class.name.camelize.constantize.reflections.values.detect do |value|
-      value.macro == :has_many && value.name.to_s == has_many_string
-    end
-    data.klass if data # output of detect from hash is an array with key and value
-  end
-
-  def self.get_class_name_for_belongs_to_class(model, belongs_to_string)
-    reflections = model.class.name.camelize.constantize.reflections
-    options = reflections.fetch(belongs_to_string.intern).send(:options)
-    return {:polymorphic => true} if options.keys.include?(:polymorphic) && options.fetch(:polymorphic)
-    {:klass_name => reflections[belongs_to_string.intern].klass.name }
-  end
-
-
   def self.string_representation_of_data(value)
     case value
     when BigDecimal

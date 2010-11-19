@@ -18,9 +18,9 @@ module AdminData
     end
 
     # returns declared association names like
-    # #=> comments
-    # #=> positive_comments
-    # #=> negative_comments
+    # #=> [comments]
+    # #=> [positive_comments]
+    # #=> [negative_comments]
     def self.delcared_association_names_for(klass, association_type)
       klass.name.camelize.constantize.reflections.values.select do |value|
         value.macro == association_type
@@ -48,8 +48,7 @@ module AdminData
       end
       data.klass if data # output of detect from hash is an array with key and value
     end
-    #TODO see util to bring polymorphic support
-
+    # TODO test with polymorphic
 
 
     def self.association_info_size(k)

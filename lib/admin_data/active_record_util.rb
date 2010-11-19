@@ -30,8 +30,8 @@ module AdminData
     # returns an array of classes
     # #=> [Comment]
     def self.habtm_klasses_for(klass)
-      declared_habtm_association_names(klass).map do |name|
-        habtm_klass_for_association_name(klass, name)
+      declared_habtm_association_names(klass).map do |assoc_name|
+        klass_for_association_type_and_name(klass, :has_and_belongs_to_many, assoc_name)
       end
     end
 

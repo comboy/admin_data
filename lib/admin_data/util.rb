@@ -195,21 +195,12 @@ class AdminData::Util
     associations_for(klass, :has_one).map(&:name).map(&:to_s)
   end
 
-  def self.belongs_to_what(klass)
-    associations_for(klass, :belongs_to).map(&:name).map(&:to_s)
-  end
-
-  def self.declared_habtm_association_names(klass)
-  #def self.habtm_what(klass)
-    associations_for(klass, :has_and_belongs_to_many).map(&:name).map(&:to_s)
-  end
-  
   def self.habtm_count(model, m)
     model.send(m.intern).count
   end
 
   def self.association_info_size(k)
-    belongs_to_what(k).any? || has_many_what(k).any? || has_one_what(k).any? || AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
+    AdminData::ActiveRecordUtil.declared_belongs_to_association_names(k).any? || has_many_what(k).any? || has_one_what(k).any? || AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
   end
 
   def self.string_representation_of_data(value)

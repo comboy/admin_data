@@ -79,7 +79,7 @@ module AdminData::Helpers
   end
 
   def admin_data_belongs_to_data(model, klass)
-    array = AdminData::Util.belongs_to_what(klass).inject([]) do |output, bt|
+    array = AdminData::ActiveRecordUtil.declared_belongs_to_association_names(klass).inject([]) do |output, bt|
       begin
         t = AdminData::Util.get_class_name_for_belongs_to_class(model, bt)
         klass_name = t[:polymorphic] ? 'Polymorphic' : t[:klass_name]

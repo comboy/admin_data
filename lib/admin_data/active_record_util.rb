@@ -1,6 +1,13 @@
 module AdminData
   class ActiveRecordUtil
 
+    def self.declared_habtm_association_names(klass)
+      delcared_association_names_for(klass, :has_and_belongs_to_many).map(&:name).map(&:to_s)
+    end
+
+    def self.declared_belongs_to_association_names(klass)
+      delcared_association_names_for(klass, :belongs_to).map(&:name).map(&:to_s)
+    end
 
     # returns declared association names like
     # #=> comments
@@ -10,11 +17,6 @@ module AdminData
       klass.name.camelize.constantize.reflections.values.select do |value|
         value.macro == association_type
       end
-    end
-
-
-    def self.declared_habtm_association_names(klass)
-      delcared_association_names_for(klass, :has_and_belongs_to_many).map(&:name).map(&:to_s)
     end
 
     # returns an array of classes

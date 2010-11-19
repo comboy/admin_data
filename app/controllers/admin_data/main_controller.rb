@@ -69,7 +69,7 @@ class AdminData::MainController  < AdminData::BaseController
     model_name_underscored = @klass.name.underscore
     model_attrs = update_model_with_assoc(params[model_name_underscored])
     @columns = columns_list
-    
+
     respond_to do |format|
       if @model.update_attributes(model_attrs)
         format.html do
@@ -105,18 +105,14 @@ class AdminData::MainController  < AdminData::BaseController
   end
 
   private
-  
+
   # If this class has any habtm relationships, update the parameters
   # in the model with the actual objects so they can be saved properly
+  # TODO write test for it
   def update_model_with_assoc(model_attrs)
-    if AdminData::Util.habtm_what(@klass).any? then
-      AdminData::Util.habtm_what(klass).each do |k|
-        assoc_klass = AdminData::Util.get_class_name_for_habtm_association(@model || @klass, k)
-        if model_attrs.include? assoc_klass.table_name then
-          model_attrs[assoc_klass.table_name].map! do |s|
-            assoc_klass.find(s.to_i)
-          end
-        end
+    AdminData::ActiveRecordUtil.habtm_klasses_for(klass).each do |k|
+      if model_attrs.include? k.table_name
+        model_attrs[k.table_name].map! { |s| k.find(s.to_i) }
       end
     end
     model_attrs

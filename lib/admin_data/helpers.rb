@@ -102,7 +102,7 @@ module AdminData::Helpers
   end
   
   def admin_data_habtm_data(model, klass)
-    array = AdminData::Util.habtm_what(klass).inject([]) do |output, m|
+    array = AdminData::ActiveRecordUtil.declared_habtm_association_names(klass).inject([]) do |output, m|
       # same as admin_data_has_many_data()
       begin
         label = m + '(' + AdminData::Util.habtm_count(model, m).to_s + ')'
@@ -178,7 +178,7 @@ module AdminData::Helpers
   def admin_data_form_field_for_habtm_records(klass, model, f, html)
     begin
       html = []
-      AdminData::Util.habtm_what(klass).each do |k|
+      AdminData::ActiveRecordUtil.delcared_habtm_association_names(klass).each do |k|
         assoc_klass = AdminData::Util.get_class_name_for_habtm_association(model, k)
         
         html << "<div class='col_box'>"

@@ -34,3 +34,6 @@ Rails.application.routes.draw do
   end
 
 end
+
+
+#TODO delete and destroy from show page do not provide any feedback

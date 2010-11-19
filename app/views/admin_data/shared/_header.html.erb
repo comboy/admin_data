@@ -4,7 +4,7 @@
   <ul id='subnav'>
     <li> 
       <% label = "Back to Site " + image_tag('https://github.com/neerajdotname/admin_data/raw/master/public/images/site.png', :width => '12') %>
-      <%= link_to label.html_safe, '/' %> 
+      <%= link_to label.html_safe, '/admin_data' %> 
     </li>
     <li> 
       <%= link_to AdminData::Config.setting[:app_name] , admin_data_index_path %> 

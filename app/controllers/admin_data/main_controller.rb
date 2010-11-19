@@ -74,7 +74,7 @@ class AdminData::MainController  < AdminData::BaseController
       if @model.update_attributes(model_attrs)
         format.html do
           flash[:success] = "Record was updated"
-          redirect_to admin_data_mmvn_k_path(:id => @model, :klass => @klass.name.underscore)
+          redirect_to admin_data_path(:id => @model, :klass => @klass.name.underscore)
         end
         format.js { render :json => {:success => true}}
       else

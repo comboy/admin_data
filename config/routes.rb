@@ -1,18 +1,8 @@
 Rails.application.routes.draw do
 
   namespace(:admin_data) do
-
     match '/' => "main#index", :as => :index
-
-    #match '/migration' => "migration#index", :as => :migration_information
-    #match '/jstest' => "migration#jstest", :as => :jstest
-
     match '/feed/:klasss' => "feed#index", :defaults => { :format =>'rss' }, :as => :feed
-
-    match '/quick_search/:klass' => "search#quick_search", :as => :search
-    match '/advance_search/:klass' => "search#advance_search", :as => :advance_search
-    
-    match '/public/*file' => "public#serve"
   end
 
   scope '/admin_data' do
@@ -30,10 +20,16 @@ Rails.application.routes.draw do
   end
 
   scope "admin_data", :module => :admin_data, :as => 'admin_data' do
+
     controller "migration" do
       match '/migration', :to => :index,  :as => :migration_information
       match '/jstest',    :to => :jstest, :as => :jstest
     end
+
+    match '/quick_search/:klass' => "search#quick_search", :as => :search
+    match '/advance_search/:klass' => "search#advance_search", :as => :advance_search
+    match '/public/*file' => "public#serve"
+
   end
 
 end

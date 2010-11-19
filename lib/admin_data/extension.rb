@@ -9,7 +9,7 @@ class AdminData::Extension
         habtm_klasses.each do |k|
           name = k.columns.map(&:name).include?('name') ? :name : k.primary_key
           data << [ k.table_name, model.send(k.table_name).map{ |e|
-            view.link_to(e.send(name), view.admin_data_on_k_path(:klass => k, :id => e.send(k.primary_key)))
+            view.link_to(e.send(name), view.admin_data_path(:klass => k, :id => e.send(k.primary_key)))
           }.join(", ").html_safe ]
         end
       end

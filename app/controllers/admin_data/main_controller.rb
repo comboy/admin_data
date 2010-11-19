@@ -8,7 +8,7 @@ class AdminData::MainController  < AdminData::BaseController
 
   before_filter :get_model_and_verify_it, :only => [:destroy, :del, :edit, :update, :show]
 
-  before_filter :ensure_is_allowed_to_view_klass, :except => [:all_models, :index]
+  before_filter :ensure_is_allowed_to_view_klass, :except => [:index]
 
   before_filter :ensure_is_allowed_to_update, :only => [:destroy, :del, :edit, :update, :create]
 
@@ -32,7 +32,7 @@ class AdminData::MainController  < AdminData::BaseController
     respond_to {|format| format.html}
   end
 
-  def all_models
+  def index
     respond_to {|format| format.html}
   end
 
@@ -74,7 +74,7 @@ class AdminData::MainController  < AdminData::BaseController
       if @model.update_attributes(model_attrs)
         format.html do
           flash[:success] = "Record was updated"
-          redirect_to admin_data_on_k_path(:id => @model, :klass => @klass.name.underscore)
+          redirect_to admin_data_mmvn_k_path(:id => @model, :klass => @klass.name.underscore)
         end
         format.js { render :json => {:success => true}}
       else
@@ -97,7 +97,7 @@ class AdminData::MainController  < AdminData::BaseController
       else
         format.html do
           flash[:success] = "Record was created"
-          redirect_to admin_data_on_k_path(:id => @model, :klass => @klass.name.underscore)
+          redirect_to admin_data_path(:id => @model, :klass => @klass.name.underscore)
         end
         format.js { render :json => {} }
       end

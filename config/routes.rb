@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   namespace(:admin_data) do
 
-    match '/' => "main#all_models", :as => :index
+    match '/' => "main#index", :as => :index
 
     match '/migration' => "migration#index", :as => :migration_information
     match '/jstest' => "migration#jstest", :as => :jstest
@@ -16,16 +16,17 @@ Rails.application.routes.draw do
   end
 
   scope '/admin_data' do
-    match '/klass/:klass/table_structure' => "admin_data/main#table_structure", :as => :table_structure_admin_data_on_k, :via => :get
-    match '/klass/(:klass(.:format))' => "admin_data/main#index", :as => :admin_data_on_k_index, :via => :get
-    match '/klass/(:klass(.:format))' => "admin_data/main#create", :as => :admin_data_on_k_index, :via => :post
+    match '/klass/:klass/table_structure' => "admin_data/main#table_structure", :as => :table_structure_admin_data, :via => :get
 
-    match '/klass/:klass/new' => "admin_data/main#new", :as => :new_admin_data_on_k, :via => :get
-    match '/klass/:klass/:id/del' => "admin_data/main#del", :as => :del_admin_data_on_k, :via => :delete
-    match '/klass/:klass/:id/edit' => "admin_data/main#edit", :as => :edit_admin_data_on_k, :via => :get
-    match '/klass/:klass/:id' => "admin_data/main#show", :as => :admin_data_on_k, :via => :get
-    match '/klass/:klass/:id' => "admin_data/main#update", :as => :admin_data_on_k, :via => :put
-    match '/klass/:klass/:id' => "admin_data/main#destroy", :as => :admin_data_on_k, :via => :delete
+    match '/klass/(:klass)' => "admin_data/main#index",       :as => :admin_data_index, :via => :get
+    match '/klass/(:klass)' => "admin_data/main#create",      :as => :admin_data_index, :via => :post
+
+    match '/klass/:klass/new' => "admin_data/main#new",       :as => :new_admin_data, :via => :get
+    match '/klass/:klass/:id/del' => "admin_data/main#del",   :as => :del_admin_data, :via => :delete
+    match '/klass/:klass/:id/edit' => "admin_data/main#edit", :as => :edit_admin_data, :via => :get
+    match '/klass/:klass/:id' => "admin_data/main#show",      :as => :admin_data, :via => :get
+    match '/klass/:klass/:id' => "admin_data/main#update",    :as => :admin_data, :via => :put
+    match '/klass/:klass/:id' => "admin_data/main#destroy",   :as => :admin_data, :via => :delete
   end
 
 end

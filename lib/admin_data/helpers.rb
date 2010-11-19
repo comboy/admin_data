@@ -8,7 +8,7 @@ module AdminData::Helpers
     output = []
     if params[:base]
       label = params[:base].camelize + ' ID ' + params[:model_id]
-      output << link_to(label, admin_data_on_k_path(:klass => params[:base], :id => params[:model_id]))
+      output << link_to(label, admin_data_path(:klass => params[:base], :id => params[:model_id]))
       output << 'has'
       output << pluralize(total_num_of_children, params[:klass])
 
@@ -31,7 +31,7 @@ module AdminData::Helpers
 
   def admin_data_invalid_record_link(klassu, id, error)
     record = klassu.camelize.constantize.send(:find, id)
-    tmp = admin_data_on_k_path(:klass => klassu, :id => record)
+    tmp = admin_data_path(:klass => klassu, :id => record)
     a = []
     a << link_to(klassu.camelize, tmp, :target => '_blank')
     a << id
@@ -45,7 +45,7 @@ module AdminData::Helpers
       begin
         label = ho
         if model.send(ho)
-          output << link_to(label, admin_data_on_k_path(:klass => ho.underscore, :id => model.send(ho)))
+          output << link_to(label, admin_data_path(:klass => ho.underscore, :id => model.send(ho)))
         else
           output << label
         end
@@ -82,7 +82,7 @@ module AdminData::Helpers
       begin
         output = assoc_name
         if belongs_to_record = model.send(assoc_name)
-          output = link_to(assoc_name, admin_data_on_k_path(:klass => belongs_to_record.class.name.underscore, :id => belongs_to_record.id))
+          output = link_to(assoc_name, admin_data_path(:klass => belongs_to_record.class.name.underscore, :id => belongs_to_record.id))
         end
       rescue => e
         Rails.logger.info AdminData::Util.exception_info(e)
@@ -116,7 +116,7 @@ module AdminData::Helpers
     assoc_klass = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model, klass)
     name = assoc_klass.columns.map(&:name).include?('name') ? :name : assoc_klass.primary_key
     model.send(assoc_klass.table_name).map{ |e|
-      link_to(e.send(name), admin_data_on_k_path(:klass => assoc_klass, :id => e.id))
+      link_to(e.send(name), admin_data_path(:klass => assoc_klass, :id => e.id))
     }.join(", ").html_safe
   end
 
@@ -269,7 +269,7 @@ module AdminData::Helpers
           value = ("#{value} (" +
           link_to(
           assoc.send(name),
-          admin_data_on_k_path(:klass => ar.klass,
+          admin_data_path(:klass => ar.klass,
           :id => assoc.send(ar.klass.primary_key))) + ")").html_safe
         end
       end

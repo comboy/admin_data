@@ -5,21 +5,21 @@ Rails.application.routes.draw do
     match '/feed/:klasss' => "feed#index", :defaults => { :format =>'rss' }, :as => :feed
   end
 
-  scope '/admin_data' do
-    match '/klass/:klass/table_structure' => "admin_data/main#table_structure", :as => :table_structure_admin_data, :via => :get
+  namespace(:admin_data) do
+  #scope "admin_data", :module => :admin_data, :as => 'admin_data' do
+  scope :admin_data do
 
-    match '/klass/(:klass)' => "admin_data/main#index",       :as => :admin_data_index, :via => :get
-    match '/klass/(:klass)' => "admin_data/main#create",      :as => :admin_data_index, :via => :post
-
-    match '/klass/:klass/new' => "admin_data/main#new",       :as => :new_admin_data, :via => :get
-    match '/klass/:klass/:id/del' => "admin_data/main#del",   :as => :del_admin_data, :via => :delete
-    match '/klass/:klass/:id/edit' => "admin_data/main#edit", :as => :edit_admin_data, :via => :get
-    match '/klass/:klass/:id' => "admin_data/main#show",      :as => :admin_data, :via => :get
-    match '/klass/:klass/:id' => "admin_data/main#update",    :as => :admin_data, :via => :put
-    match '/klass/:klass/:id' => "admin_data/main#destroy",   :as => :admin_data, :via => :delete
-  end
-
-  scope "admin_data", :module => :admin_data, :as => 'admin_data' do
+    controller "main" do
+      match '/klass/:klass/table_structure',  :to => :table_structure,  :as => :table_structure, :via => :get
+      match '/klass/(:klass)',                :to => :index,            :as => :index,           :via => :get
+      match '/klass/(:klass)',                :to => :create,           :as => :index,           :via => :post
+      match '/klass/:klass/new',              :to => :new,              :as => :new, :via => :get
+      match '/klass/:klass/:id/del',          :to => :del,              :as => :del, :via => :delete
+      match '/klass/:klass/:id/edit',         :to => :edit,             :as => :edit, :via => :get
+      match '/klass/:klass/:id',              :to => :show,             :via => :get
+      match '/klass/:klass/:id',              :to => :update,           :via => :put
+      match '/klass/:klass/:id',              :to => :destroy,          :via => :delete
+    end
 
     controller "migration" do
       match '/migration', :to => :index,  :as => :migration_information
@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     match '/advance_search/:klass' => "search#advance_search", :as => :advance_search
     match '/public/*file' => "public#serve"
 
+  end
   end
 
 end

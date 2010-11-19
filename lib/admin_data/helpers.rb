@@ -45,7 +45,6 @@ module AdminData::Helpers
       begin
         label = ho
         if model.send(ho)
-          has_one_klass_name = AdminData::Util.get_class_name_for_has_one_association(model, ho).name.underscore
           output << link_to(label, admin_data_on_k_path(:klass => ho.underscore, :id => model.send(ho)))
         else
           output << label
@@ -60,8 +59,9 @@ module AdminData::Helpers
   def admin_data_has_many_data(model, klass)
     array = AdminData::ActiveRecordUtil.declared_has_many_association_names(klass).inject([]) do |output, hm|
       begin
-        label = hm + '(' + AdminData::Util.has_many_count(model,hm).to_s + ')'
-        if AdminData::Util.has_many_count(model,hm) > 0
+        count = model.send(m.intern).count
+        label = hm + '(' + count + ')'
+        if count > 0
           has_many_klass_name = AdminData::Util.get_class_name_for_has_many_association(model,hm).name.underscore
           output << link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
           :children => hm,
@@ -81,7 +81,8 @@ module AdminData::Helpers
   def admin_data_belongs_to_data(model, klass)
     array = AdminData::ActiveRecordUtil.declared_belongs_to_association_names(klass).inject([]) do |output, bt|
       begin
-        t = AdminData::Util.get_class_name_for_belongs_to_class(model, bt)
+        t = AdminData::ActiveRecordUtil.klass_for_association_type_and_name(model, :belongs_to, bt)
+        #TODO test for polymorphic
         klass_name = t[:polymorphic] ? 'Polymorphic' : t[:klass_name]
         belongs_to_record = model.send(bt)
 
@@ -105,8 +106,9 @@ module AdminData::Helpers
     array = AdminData::ActiveRecordUtil.declared_habtm_association_names(klass).inject([]) do |output, m|
       # same as admin_data_has_many_data()
       begin
-        label = m + '(' + AdminData::Util.habtm_count(model, m).to_s + ')'
-        if AdminData::Util.habtm_count(model, m) > 0 then
+        count = model.send(m.intern).count
+        label = m + '(' + count.to_s + ')'
+        if count > 0 then
           has_many_klass_name = AdminData::Util.get_class_name_for_habtm_association(model,m).name.underscore
           output << link_to(label, admin_data_search_path(  :klass => has_many_klass_name,
                       :children => m,

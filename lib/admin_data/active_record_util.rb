@@ -42,11 +42,21 @@ module AdminData
     # end
     #
     # AdminData::ActiveRecordUtil.habtm_klass_for_association_name(User, 'comments') #=> Comment
-    def self.habtm_klass_for_association_name(klass, habtm_association_name)
+    def self.klass_for_association_type_and_name(klass, association_type, association_name)
       data = klass.name.camelize.constantize.reflections.values.detect do |value|
-        value.macro == :has_and_belongs_to_many && value.name.to_s == has_many_string
+        value.macro == association_type && value.name.to_s == association_name
       end
       data.klass if data # output of detect from hash is an array with key and value
+    end
+    #TODO see util to bring polymorphic support
+
+
+
+    def self.association_info_size(k)
+      AdminData::ActiveRecordUtil.declared_belongs_to_association_names(k).any? ||
+      AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? ||
+      AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? ||
+      AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
     end
 
   end

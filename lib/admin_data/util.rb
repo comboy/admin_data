@@ -176,27 +176,6 @@ class AdminData::Util
     {:klass_name => reflections[belongs_to_string.intern].klass.name }
   end
 
-  def self.get_class_name_for_has_one_association(model, has_one_string)
-    data = model.class.name.camelize.constantize.reflections.values.detect do |value|
-      value.macro == :has_one && value.name.to_s == has_one_string
-    end
-    data.klass if data
-  end
-
-  def self.has_many_count(model, hm)
-    model.send(hm.intern).count
-  end
-
-  def self.habtm_count(model, m)
-    model.send(m.intern).count
-  end
-
-  def self.association_info_size(k)
-    AdminData::ActiveRecordUtil.declared_belongs_to_association_names(k).any? || 
-    AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? || 
-    AdminData::ActiveRecordUtil.declared_has_many_association_names(k).any? || 
-    AdminData::ActiveRecordUtil.declared_habtm_association_names(k).any?
-  end
 
   def self.string_representation_of_data(value)
     case value

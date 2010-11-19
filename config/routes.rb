@@ -4,8 +4,8 @@ Rails.application.routes.draw do
 
     match '/' => "main#index", :as => :index
 
-    match '/migration' => "migration#index", :as => :migration_information
-    match '/jstest' => "migration#jstest", :as => :jstest
+    #match '/migration' => "migration#index", :as => :migration_information
+    #match '/jstest' => "migration#jstest", :as => :jstest
 
     match '/feed/:klasss' => "feed#index", :defaults => { :format =>'rss' }, :as => :feed
 
@@ -27,6 +27,13 @@ Rails.application.routes.draw do
     match '/klass/:klass/:id' => "admin_data/main#show",      :as => :admin_data, :via => :get
     match '/klass/:klass/:id' => "admin_data/main#update",    :as => :admin_data, :via => :put
     match '/klass/:klass/:id' => "admin_data/main#destroy",   :as => :admin_data, :via => :delete
+  end
+
+  scope "admin_data", :module => :admin_data, :as => 'admin_data' do
+    controller "migration" do
+      match '/migration', :to => :index,  :as => :migration_information
+      match '/jstest',    :to => :jstest, :as => :jstest
+    end
   end
 
 end
